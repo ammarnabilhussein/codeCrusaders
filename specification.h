@@ -16,9 +16,23 @@ class user
     private:
         string userName, password, type;
     public:
-        user(string,string,string);
+    user* next;
+    user* prev;
+
+        user(string x,string y ,string z)
+        {
+            userName = x;
+            password = y;
+            type = z;
+            next = prev = NULL;
+
+        }
+        string getType()  {return type; }
+        string getUserName() {  return userName;}
+        string getPassword() {return password;}
 
 };
+
 
 class admin : public user
 {
@@ -48,5 +62,7 @@ class customers : public user
 
 };
 
+// Function declarations
+user* login(user* head);
 
 #endif
