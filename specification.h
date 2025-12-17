@@ -82,21 +82,7 @@ class admin : public user
 
 };
 
-/*class customers : public user
-{
-    public:
-        customers(string, string, string);
 
-        article* searchByTitle(string title);
-        article* searchByDate(int date);
-        article* searchByKeywords(string words);
-        void displayCategoryNews(string Categoryname, articleList* news);
-        void  displayLatestNews();
-        void displayTrendingNews();
-        void rateNews();
-        void bookmark();
-
-}; */
 
 
 #endif
