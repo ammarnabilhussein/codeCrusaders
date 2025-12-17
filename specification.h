@@ -6,11 +6,12 @@ using namespace std;
 
 struct article
 {
-    string title, category, description,publishDate,author;
+    string title, /*category,*/ description,author;
+    int publish_month, publish_day;
     int rating, id;
     article* next;
     article();
-    article(string t, string c, string d, string pD, string a, int r, int i);
+    article(string t, string c, string d, int pd, int pm, string a, int r, int i);
 
 };
 
@@ -23,7 +24,7 @@ class articleList // aka news
         
         articleList();
         ~articleList();
-        void idGenerator();
+        void idGenerator(); 
 };
 
 
@@ -54,7 +55,7 @@ class admin : public user
         void postNews(article toAdd);
         void removeNews(int id);
         void updateExisting(int id);
-        void addCategory(string categoryName);
+        void addCategory(string categoryName); // Use this when doing my function youssef
         void displayAvgRateForCat(string categoryName);
 
 };
