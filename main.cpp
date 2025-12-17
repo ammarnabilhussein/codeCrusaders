@@ -10,7 +10,7 @@ user* login(user* head);
 
 int main()
 {   
-    // copilot wrote this part
+    // copilot wrote this part , delete so we don't get fucked
     
     user* usersHead = nullptr;
     // Code to initialize usersHead with some users would go here

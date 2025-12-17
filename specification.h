@@ -19,14 +19,28 @@ class articleList // aka news
 {
     
     public:
+        string category;
         article *head, *tail;
         int size;
         
         articleList();
         ~articleList();
-        void idGenerator(); 
-};
+        int idGenerator(); 
 
+};
+class most_recent
+{
+public: 
+ article*head;
+ int size;
+ most_recent();
+ ~most_recent();
+ void push(article);
+ bool isempty();
+ article* top();
+    void pop();
+    void clear();
+};
 
 class user
 {
@@ -42,6 +56,14 @@ class user
         string getType();
         string getUserName();
         string getPassword();
+        article* searchByTitle(string title);
+        article* searchByDate(int date);
+        article* searchByKeywords(string words);
+        void displayCategoryNews(string Categoryname, articleList* news);
+        void  displayLatestNews();
+        void displayTrendingNews();
+        void rateNews();
+        void bookmark();
 
 };
 
@@ -52,7 +74,7 @@ class admin : public user
   
         admin(string, string, string, user*, user*);
 
-        void postNews(article toAdd);
+        void postNews();
         void removeNews(int id);
         void updateExisting(int id);
         void addCategory(string categoryName); // Use this when doing my function youssef
@@ -60,7 +82,7 @@ class admin : public user
 
 };
 
-class customers : public user
+/*class customers : public user
 {
     public:
         customers(string, string, string);
@@ -74,7 +96,7 @@ class customers : public user
         void rateNews();
         void bookmark();
 
-};
+}; */
 
 
 #endif
