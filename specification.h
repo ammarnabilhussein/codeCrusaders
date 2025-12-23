@@ -19,32 +19,44 @@ class newsCategory
 {
     
     public:
-        string category;
-        article *head, *tail;
         int numberOfArticles;
+        string categoryName;
+        article *head, *tail;
+        newsCategory* next;
         
         newsCategory();
         ~newsCategory();
-        int idGenerator(); 
+        void addToHead(article*);
+        void addToTail(article*);
+        void addToMid(article*,int);
+        void removeFromHead();
+        void removeFromTail();
+        void removefromMid();
 
 };
 
 class categories
 {
+    int numberOfCategories;
     newsCategory* head;
     newsCategory* tail;
-    int numberOfCategories;
     public:
         categories(/* args */);
         ~categories();
+        void addToHead(newsCategory*);
+        void addToTail(newsCategory*);
+        void addToMid(newsCategory*,int);
+        void removeFromHead();
+        void removeFromTail();
+        void removefromMid();
 };
 
 
 class most_recent
 {
     public: 
-        article*head;
         int size;
+        article*head;
         most_recent();
         ~most_recent();
         void push(article);
@@ -53,6 +65,21 @@ class most_recent
         void pop();
         void clear();
 };
+
+class high_rated // queue to be used for arranging the articles base on rating by a fn
+{
+    private:
+        int size;
+        article* head, *tail;
+        void enqueue(article*);
+        void dequeue();
+        void display();
+        void clear();
+    public:
+        high_rated(/* args */);
+        ~high_rated();
+};
+
 
 class user
 {

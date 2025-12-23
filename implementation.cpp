@@ -31,7 +31,7 @@ article :: article(string title, string category, string description, string aut
 
 newsCategory :: newsCategory()
 {
-    category = "";
+    categoryName = "";
     head = nullptr;
     tail = nullptr;
     numberOfArticles = 0;
