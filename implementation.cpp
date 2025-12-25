@@ -31,28 +31,265 @@ article :: article(string title, string category, string description, string aut
 
 newsCategory :: newsCategory()
 {
+    numberOfArticles = 0;
     categoryName = "";
     head = nullptr;
     tail = nullptr;
-    numberOfArticles = 0;
 }
 
 newsCategory ::~newsCategory()
 {
-    article* temp = head;
-    article* nextArticle;
+    article* current = head;
+    article* toDelete;
 
-    while (temp != nullptr)
+    while (current != nullptr)
     {
-        nextArticle = temp->next;
-        delete temp;
-        temp = nextArticle;
+        toDelete = current;
+        current = current ->next;
+        delete toDelete;
     }
-    head = nullptr;
-    tail = nullptr;
+    head = tail = nullptr;
     numberOfArticles = 0;
 }
 
+void newsCategory ::addToHead(article* toAdd){
+    if (isEmpty())
+    {
+        head = tail = toAdd;
+    }else{
+        toAdd ->next = head;
+        head = toAdd;
+    }
+    numberOfArticles++;
+
+}
+
+void newsCategory ::addToTail(article* toAdd){
+    if (isEmpty())
+    {
+        head = tail = toAdd;
+    }else{
+        tail ->next = toAdd;
+        tail = toAdd;
+    }
+    numberOfArticles++;
+}
+
+void newsCategory ::removeFromHead(){
+    if (isEmpty())
+    {
+        return;
+    }
+    if (head == tail)
+    {
+        delete head;
+        head = tail = nullptr;
+    }else{
+        article* toDelete = head;
+        head = head ->next;
+        delete toDelete;
+    }
+    numberOfArticles--;
+    
+}
+
+void newsCategory ::removeFromTail(){
+    if (isEmpty())
+    {
+        return;
+    }
+    if (head == tail)
+    {
+        delete head;
+        head = tail = nullptr;
+    }else{
+        article* toDelete = head;
+        article* previous;
+        while (toDelete ->next != nullptr)
+        {
+            previous = toDelete;
+            toDelete = toDelete ->next;
+        }
+        tail = previous;
+        delete toDelete;
+        tail ->next = nullptr;
+    }
+    numberOfArticles--;
+}
+
+void newsCategory ::removefromMid(article* toAdd, int id){
+    if (isEmpty())
+    {
+        return;
+    }
+    if (head ->id == id)
+    {
+        removeFromHead();
+    }else{
+        article* toDelete = head;
+        article* previous;
+        while (toDelete != nullptr)
+        {
+            if (toDelete ->id == id)
+            {
+                break;
+            }
+            previous = toDelete;
+            toDelete = toDelete ->next;
+        }
+        if (toDelete == nullptr)
+        {
+            return;
+        }
+        previous ->next = toDelete ->next;
+        delete toDelete;
+        numberOfArticles--;
+    }
+    
+}
+
+bool newsCategory ::isEmpty(){
+    return numberOfArticles == 0;
+}
+
+categories ::categories(){
+    numberOfCategories = 0;
+    head = nullptr;
+    tail = nullptr;
+}
+
+categories ::~categories(){
+    newsCategory* current = head;
+    newsCategory* toDelete;
+    while (current != nullptr)
+    {
+        toDelete = current;
+        current = current ->next;
+        delete toDelete;
+    }
+    head = tail = nullptr;
+    numberOfCategories = 0;
+    
+}
+
+void categories ::addToHead(newsCategory* toAdd){
+    if (isEmpty())
+    {
+        head = tail = toAdd;
+    }else{
+        toAdd ->next = head;
+        head = toAdd;
+    }
+    numberOfCategories++;
+}
+
+void categories ::addToTail(newsCategory* toAdd){
+    if (isEmpty())
+    {
+        head = tail = toAdd;
+    }else{
+        tail ->next = toAdd;
+        tail = toAdd;
+    }
+    numberOfCategories++;
+    
+}
+
+bool categories ::isEmpty(){
+    return numberOfCategories == 0;
+}
+
+mostRecent ::mostRecent(){
+    size = 0;
+    head = nullptr;
+
+}
+
+mostRecent ::~mostRecent(){
+    article* toDelete = head;
+    while (head != nullptr)
+    {
+        toDelete = head;
+        head = head ->next;
+        delete toDelete;
+    }
+    size = 0;
+    
+}
+
+void mostRecent ::push(article* toAdd){
+    if (isEmpty())
+    {
+        head = toAdd;
+    }else{
+        toAdd ->next = head;
+        head = toAdd;
+    }
+    size++;
+}
+
+void mostRecent ::pop(){
+    if (isEmpty())
+    {
+        return;
+    }
+    article* toDelete = head;
+    head = head ->next;
+    delete toDelete;
+    size--;
+}
+
+article* mostRecent ::top(){
+    if (isEmpty())
+    {
+        return nullptr;
+    }
+    return head;
+}
+
+bool mostRecent ::isEmpty(){
+    return size == 0;
+}
+
+ratingOrder ::ratingOrder(){
+    size = 0;
+    head = tail = nullptr;
+}
+
+ratingOrder ::~ratingOrder(){
+    while (!isEmpty())
+    {
+        dequeue();
+    }
+    
+}
+
+void ratingOrder ::enqueue(article* toAdd){
+    if (isEmpty())
+    {
+        head = tail = toAdd;
+    }else{
+        tail ->next = toAdd;
+        tail = toAdd;
+    }
+    size++;
+}
+
+article ratingOrder ::dequeue(){
+    if (isEmpty())
+    {
+        return;
+    }
+    article* toDelete = head;
+    head = head ->next;
+    article toReturn = *toDelete;
+    size--;
+    return toReturn;
+}
+
+bool ratingOrder ::isEmpty(){
+    return size == 0;
+}
 
 user ::user()
 {

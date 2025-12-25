@@ -3,11 +3,13 @@
 using namespace std;
 
 user* login(user* head);
+void addToMostRecent(mostRecent *news, article* toAdd);
+void addToOrderAccordingToRate(ratingOrder* news, article* toAdd);
 
 int main()
 {   
-    most_recent allNews;
-
+    mostRecent allNews;
+    ratingOrder allnews;
 
     // copilot wrote this part , delete so we don't get fucked
     

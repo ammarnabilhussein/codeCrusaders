@@ -10,6 +10,7 @@ struct article
     int publish_month, publish_day;
     int rating, id;
     article* next;
+
     article();
     article(string title, string category, string description, string author,int publish_month, int publish_day, int rating, int id, article* next = nullptr);
 
@@ -28,56 +29,53 @@ class newsCategory
         ~newsCategory();
         void addToHead(article*);
         void addToTail(article*);
-        void addToMid(article*,int);
         void removeFromHead();
         void removeFromTail();
-        void removefromMid();
+        void removefromMid(article*,int);
+        bool isEmpty();
 
 };
 
 class categories
 {
-    int numberOfCategories;
-    newsCategory* head;
-    newsCategory* tail;
     public:
-        categories(/* args */);
+        int numberOfCategories;
+        newsCategory* head;
+        newsCategory* tail;
+
+        categories();
         ~categories();
         void addToHead(newsCategory*);
         void addToTail(newsCategory*);
-        void addToMid(newsCategory*,int);
-        void removeFromHead();
-        void removeFromTail();
-        void removefromMid();
+        bool isEmpty();
 };
 
 
-class most_recent // stack to be used for arranging the articles based on date by a fn
+class mostRecent // stack to be used for arranging the articles based on date by a fn
 {
     public: 
         int size;
         article*head;
-        most_recent();
-        ~most_recent();
-        void push(article);
+
+        mostRecent();
+        ~mostRecent();
+        void push(article*);
         void pop();
         article* top();
-        bool isempty();
-        void clear();
+        bool isEmpty();
 };
 
-class high_rated // queue to be used for arranging the articles base on rating by a fn
+class ratingOrder // queue to be used for arranging the articles base on rating by a fn
 {
-    private:
+    public:
         int size;
         article* head, *tail;
+
+        ratingOrder();
+        ~ratingOrder();
         void enqueue(article*);
-        void dequeue();
-        void display();
-        void clear();
-    public:
-        high_rated(/* args */);
-        ~high_rated();
+        article dequeue();
+        bool isEmpty();
 };
 
 
@@ -101,7 +99,7 @@ class user
         article* searchByDate(int date);
         article* searchByKeywords(string words);
         void displayCategoryNews(string categoryName, categories* news);
-        void  displayLatestNews(most_recent* allNews);
+        void displayLatestNews(mostRecent* allNews);
         void displayTrendingNews();
         void rateNews(int rate, article* news);
         void bookmark(article* news);
