@@ -111,7 +111,7 @@ class admin : public user
 
         int idGenerator();
         void addArticle(categories* news, mostRecent* recentNews, newsCategory* ratedNews);
-        void removeArticle(int id,categories* news);
+        void removeArticle(int id,categories* news, mostRecent* recentNews, newsCategory* ratedNews);
         void updateExisting(int id);
         newsCategory* addCategory(); // Use this when doing my function youssef
         void displayAvgRateForCat(string categoryName, categories* news);

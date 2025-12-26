@@ -425,11 +425,35 @@ void admin ::addArticle(categories* news, mostRecent* recentNews, newsCategory* 
         storeMoreRecent ->pop();
     }
 
-    
+    article* current = ratedNews ->head;
+    article* previous;
+    if (current == nullptr)
+    {
+        ratedNews ->addToHead(newArticle);
+    }else {
+        while (current != nullptr)
+        {
+            if (newArticle ->rating > current ->rating)
+            {
+                break;
+            }
+            previous = current;
+            current = current ->next;
+        }
+    }
+
+    if (current == nullptr)
+    {
+        ratedNews ->addToTail(newArticle);
+    }else{
+        previous ->next = newArticle;
+        newArticle ->next = current;
+        ratedNews ->numberOfArticles++;
+    }
     
 }
 
-void admin ::removeArticle(int id,categories* news){
+void admin ::removeArticle(int id,categories* news, mostRecent* recentNews, newsCategory* ratedNews){
     newsCategory* currentCat = news ->head;
     while (currentCat != nullptr)
     {
@@ -442,9 +466,28 @@ void admin ::removeArticle(int id,categories* news){
     if (currentCat == nullptr)
     {
         cout << "Article not found " << endl;
-    } else{
-        cout << "Article removed successfully." << endl;
+        return;
     }
+    mostRecent* temp;
+    while (!recentNews ->isEmpty())
+    {
+        article* current = recentNews ->top();
+        if (current ->id == id)
+        {
+            recentNews ->pop();
+            break;
+        }
+        temp ->push(recentNews ->top());
+        temp ->pop();
+    }
+    while (!temp ->isEmpty())
+    {
+        recentNews ->push(temp ->top());
+        temp ->pop();
+    }
+    
+    ratedNews ->removefromMid(id);
+    cout << "Article removed successfully." << endl;
 
 }
 
