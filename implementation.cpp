@@ -76,10 +76,10 @@ void newsCategory ::addToTail(article* toAdd){
     numberOfArticles++;
 }
 
-void newsCategory ::removeFromHead(){
+bool newsCategory ::removeFromHead(){
     if (isEmpty())
     {
-        return;
+        return false;
     }
     if (head == tail)
     {
@@ -91,13 +91,13 @@ void newsCategory ::removeFromHead(){
         delete toDelete;
     }
     numberOfArticles--;
-    
+    return true;
 }
 
-void newsCategory ::removeFromTail(){
+bool newsCategory ::removeFromTail(){
     if (isEmpty())
     {
-        return;
+        return false;
     }
     if (head == tail)
     {
@@ -116,12 +116,13 @@ void newsCategory ::removeFromTail(){
         tail ->next = nullptr;
     }
     numberOfArticles--;
+    return true;
 }
 
-void newsCategory ::removefromMid(article* toAdd, int id){
+bool newsCategory ::removefromMid(int id){
     if (isEmpty())
     {
-        return;
+        return false;
     }
     if (head ->id == id)
     {
@@ -140,11 +141,12 @@ void newsCategory ::removefromMid(article* toAdd, int id){
         }
         if (toDelete == nullptr)
         {
-            return;
+            return false;
         }
         previous ->next = toDelete ->next;
         delete toDelete;
         numberOfArticles--;
+        return true;
     }
     
 }
@@ -252,46 +254,6 @@ bool mostRecent ::isEmpty(){
     return size == 0;
 }
 
-ratingOrder ::ratingOrder(){
-    size = 0;
-    head = tail = nullptr;
-}
-
-ratingOrder ::~ratingOrder(){
-    while (!isEmpty())
-    {
-        dequeue();
-    }
-    
-}
-
-void ratingOrder ::enqueue(article* toAdd){
-    if (isEmpty())
-    {
-        head = tail = toAdd;
-    }else{
-        tail ->next = toAdd;
-        tail = toAdd;
-    }
-    size++;
-}
-
-article ratingOrder ::dequeue(){
-    if (isEmpty())
-    {
-        return;
-    }
-    article* toDelete = head;
-    head = head ->next;
-    article toReturn = *toDelete;
-    size--;
-    return toReturn;
-}
-
-bool ratingOrder ::isEmpty(){
-    return size == 0;
-}
-
 user ::user()
 {
     userName = "";
@@ -325,38 +287,41 @@ string user :: getType()
     return type;
 }
 
-admin :: admin()
-{
-    idsCounter = 0;
-}
-
-admin ::admin(string userName, string password, string type, user* next, user* prev) : user(userName, password, type, next, prev)
-{
-    
-}
-
-int admin :: idGenerator()
-{
-    return ++idsCounter;
-}
-
-// ziad's part
 article* user::searchByTitle(string title, categories* news)
 {
     newsCategory* cat = news->head;
-
+    
     while (cat != nullptr)
     {
         article* temp = cat->head;
         while (temp != nullptr)
         {
             if (temp->title == title)
-                return temp;
-
+            return temp;
+            
             temp = temp->next;
         }
         cat = cat->next;
     }
+    return nullptr;
+}
+
+article* user ::searchByDate(mostRecent* allNews, int month, int day)
+{
+    // Copying the stack so the original is not changed
+    mostRecent temp = *allNews;
+
+    while (!temp.isEmpty())
+    {
+        article* currentArticle = temp.top();
+        temp.pop();
+
+        if (currentArticle->publish_month == month && currentArticle->publish_day == day)
+        {
+            return currentArticle;
+        }
+    }
+
     return nullptr;
 }
 
@@ -380,6 +345,213 @@ article* user::searchByKeywords(string words, categories* news)
     }
     return nullptr;
 }
+
+void user ::displayCategoryNews(string categoryName, categories* news){
+    newsCategory* temp = news ->head;
+    while (temp != nullptr)
+    {
+        if (categoryName == temp ->categoryName)
+        {
+            break;
+        }
+        temp = temp ->next;
+    }
+    if (temp != nullptr)
+    {
+        article* toDisplay = temp ->head;
+        while (toDisplay != nullptr)
+        {
+            cout << "\t\t\t\t" << toDisplay ->title << endl
+            << "\t\t\t\t" << toDisplay ->description << endl
+            << "By" << toDisplay ->author << " | " << toDisplay ->publish_month << "/" << toDisplay ->publish_day << " | " << toDisplay ->rating << "/10" << endl
+            << "--------------------------------------------------" << endl;
+            bookmark(toDisplay);
+            rateNews(toDisplay);
+            toDisplay = toDisplay ->next;
+        }
+        
+    }else{
+        cout << "No such category found." << endl;
+    }
+    
+}
+
+void user ::bookmark(article* articleToBookmark){
+    char choice;
+    if (bookmarkedHead == nullptr)
+    {
+        cout << "Do you want to bookmark this article? (y / n): ";
+        cin >> choice;
+        if (choice == 'y')
+        {
+            bookmarkedHead = articleToBookmark;
+            bookmarkedTail = articleToBookmark;
+            cout << "Article bookmarked successfully." << endl;
+        }
+        
+    }else{
+        article* temp = bookmarkedHead;
+        while (temp != nullptr){
+            if (temp ->id == articleToBookmark ->id)
+            {
+                cout << "Article already bookmarked." << endl;
+                return;
+            }
+            temp = temp ->next;
+        }
+        cout << "Do you want to bookmark this article? (y / n): ";
+        cin >> choice;
+        if (choice == 'y')
+        {
+            bookmarkedTail ->next = articleToBookmark;
+            bookmarkedTail = articleToBookmark;
+            cout << "Article bookmarked successfully." << endl;    
+        }
+        
+    }
+}
+
+admin :: admin()
+{
+    idsCounter = 0;
+}
+
+admin ::admin(string userName, string password, string type, user* next, user* prev) : user(userName, password, type, next, prev)
+{
+    
+}
+
+int admin :: idGenerator()
+{
+    return ++idsCounter;
+}
+
+void admin ::addArticle(categories* news, mostRecent* recentNews, newsCategory* ratedNews)
+{
+    string title, category, description, author;
+    int publish_month, publish_day, id;
+    cout << "Enter article title: ";
+    getline(cin, title);
+    cout << "Enter article category: ";
+    getline(cin, category);
+    cout << "Enter article description: ";
+    getline(cin, description);
+    cout << "Enter article author: ";
+    getline(cin, author);
+    cout << "Enter publish month and day: ";
+    cin >> publish_month >> publish_day;
+
+    article* newArticle = new article(title, category, description, author, publish_month, publish_day, 0, idGenerator());
+    newsCategory* temp = news ->head;
+    while (temp != nullptr)
+    {
+        if (newArticle ->category == temp ->categoryName)
+        {
+            break;
+        }
+        temp = temp ->next;
+        
+    }
+    if (temp == nullptr)
+    {
+        newsCategory* newcat = addCategory();
+        newcat ->addToTail(newArticle);
+    }else{
+        temp ->addToTail(newArticle);
+    }
+    
+    mostRecent *storeMoreRecent;
+    while (!recentNews ->isEmpty())
+    {
+        article *current = recentNews ->top();
+        if (newArticle ->publish_month < current ->publish_month)
+        {
+            recentNews ->push(newArticle);
+            break;
+        }else if(newArticle ->publish_month == current ->publish_month){
+            if (newArticle ->publish_day <= current ->publish_day)
+            {
+                recentNews ->push(newArticle);
+                break;
+            }
+        
+        }
+        storeMoreRecent ->push(recentNews ->top());
+        recentNews ->pop();
+    }
+    
+    while (!storeMoreRecent ->isEmpty())
+    {
+        recentNews ->push(storeMoreRecent ->top());
+        storeMoreRecent ->pop();
+    }
+
+    article* current = ratedNews ->head;
+    article* previous;
+    if (current == nullptr)
+    {
+        ratedNews ->addToHead(newArticle);
+    }else {
+        while (current != nullptr)
+        {
+            if (newArticle ->rating > current ->rating)
+            {
+                break;
+            }
+            previous = current;
+            current = current ->next;
+        }
+    }
+
+    if (current == nullptr)
+    {
+        ratedNews ->addToTail(newArticle);
+    }else{
+        previous ->next = newArticle;
+        newArticle ->next = current;
+        ratedNews ->numberOfArticles++;
+    }
+    
+}
+
+void admin ::removeArticle(int id,categories* news, mostRecent* recentNews, newsCategory* ratedNews){
+    newsCategory* currentCat = news ->head;
+    while (currentCat != nullptr)
+    {
+        if (currentCat ->removefromMid(id))
+        {
+            break;
+        }
+        currentCat = currentCat ->next;
+    }
+    if (currentCat == nullptr)
+    {
+        cout << "Article not found " << endl;
+        return;
+    }
+    mostRecent* temp;
+    while (!recentNews ->isEmpty())
+    {
+        article* current = recentNews ->top();
+        if (current ->id == id)
+        {
+            recentNews ->pop();
+            break;
+        }
+        temp ->push(recentNews ->top());
+        temp ->pop();
+    }
+    while (!temp ->isEmpty())
+    {
+        recentNews ->push(temp ->top());
+        temp ->pop();
+    }
+    
+    ratedNews ->removefromMid(id);
+    cout << "Article removed successfully." << endl;
+
+}
+
 
 void admin::updateExisting(int id, categories* news)
 {
@@ -489,4 +661,39 @@ void user::displayTrendingNews(ratingOrder* ratingQueue)
 
         temp = temp->next;
     }
+}
+void admin ::displayAverageRateForCategory(categories* allCategories, string categoryName)
+{
+     int totalRating = 0;
+    int articleCount = 0;
+    newsCategory* tempCategory = allCategories->head;
+    while (tempCategory != nullptr)
+    {
+        if (tempCategory->categoryName == categoryName)
+        {
+            article* currentArticle = tempCategory->head;
+            int totalRating = 0;
+            int articleCount = 0;
+
+            while (currentArticle != nullptr)
+            {
+                totalRating += currentArticle->rating;
+                articleCount++;
+                currentArticle = currentArticle->next;
+            }
+
+            if (articleCount > 0)
+            {
+                double averageRating = static_cast<double>(totalRating) / articleCount;
+                cout << "Average rating for category " << categoryName << " is: " << averageRating << endl;
+            }
+            else
+            {
+                cout << "No articles found in category " << categoryName << endl;
+            }
+            return;
+        }
+        tempCategory = tempCategory->next;
+    }
+    cout << "Category " << categoryName << " not found." << endl;
 }
